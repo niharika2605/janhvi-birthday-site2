@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Happy Birthday!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Extracted colors from the image */
+            --color-bg: #F7F4F0;
+            --color-name: #B72C33;
+            --color-pink: #D94B8F;
+        }
+
+        /* Apply the custom fonts */
+        .font-name {
+            font-family: 'Pinyon Script', cursive;
+        }
+        
+        .font-birthday {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.1em; /* Adds spacing like in the image */
+        }
+
+        /* --- FLIP CARD STYLES --- */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Makes the card square */
+            perspective: 1000px; /* 3D effect */
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 0.5rem; /* Tailwind's rounded-lg */
+            overflow: hidden; /* Ensures image corners are rounded */
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        
+        /* --- MEME GARDEN STYLES --- */
+        .flower-svg {
+            width: 80px;
+            height: auto;
+            animation: pulse 2s infinite ease-in-out;
+            filter: drop-shadow(0 4px 3px rgba(0,0,0,0.1));
+        }
+        .flower-svg .stem { fill: #4ade80; /* green-400 */ }
+        .flower-svg .petal { fill: #ec4899; /* pink-500 */ }
+        .flower-svg .center { fill: #fde047; /* yellow-300 */ }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* --- NEW: RESPONSIVE FLOWER POSITIONS --- */
+        /* Default mobile styles */
+        #flower-1 { left: 10%; bottom: 40%; }
+        #flower-2 { left: 35%; bottom: 50%; }
+        #flower-3 { left: 60%; bottom: 45%; }
+        #flower-4 { left: 80%; bottom: 55%; }
+        #flower-5 { left: 45%; bottom: 30%; }
+
+        /* Desktop styles (matches 'sm' breakpoint) */
+        @media (min-width: 640px) {
+            #flower-1 { left: 10%; bottom: 20%; }
+            #flower-2 { left: 30%; bottom: 30%; }
+            #flower-3 { left: 50%; bottom: 25%; }
+            #flower-4 { left: 70%; bottom: 35%; }
+            #flower-5 { left: 85%; bottom: 22%; }
+        }
+        
+        /* --- NEW CAKE STYLES --- */
+        .cake-layer {
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .candle {
+            width: 10px;
+            height: 50px;
+            background: #fef08a; /* yellow-200 */
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .flame {
+            width: 10px;
+            height: 18px;
+            background: #fcd34d; /* amber-400 */
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: absolute;
+            top: -16px;
+            left: 0;
+            animation: flicker 1.5s ease-in-out infinite;
+            transform-origin: bottom;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .flame.blown-out {
+            opacity: 0;
+            transform: scaleY(0.5) scaleX(0.2);
+        }
+        @keyframes flicker {
+            0%, 100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+            50% { transform: scaleY(0.9) scaleX(1.1); opacity: 0.8; }
+        }
+
+        /* --- NEW CONFETTI STYLES --- */
+        .confetti {
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            top: -20px;
+            animation: confetti-fall 4s linear forwards;
+        }
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+    </style>
+</head>
+<body class="bg-[#F7F4F0] min-h-screen flex flex-col p-4 sm:p-8 font-sans antialiased relative">
+
+    <nav class="absolute top-0 right-0 p-4 sm:p-8 z-20">
+        <ul id="nav-links" class="flex flex-col items-end space-y-2 sm:flex-row sm:flex-wrap sm:justify-end sm:items-center sm:space-y-0 sm:space-x-4 md:space-x-8">
+            <li>
+                <a href="#" data-page="home" class="nav-link font-birthday text-[#D94B8F] text-base sm:text-lg hover:text-[#B72C33] transition-colors duration-200 cursor-pointer">Birthday</a>
+            </li>
+            <li>
+                <a href="#" data-page="garden" class="nav-link font-birthday text-[#D94B8F] text-base sm:text-lg hover:text-[#B72C33] transition-colors duration-200 cursor-pointer">Meme Garden</a>
+            </li>
+            <li>
+                <a href="#" data-page="cake" class="nav-link font-birthday text-[#D94B8F] text-base sm:text-lg hover:text-[#B72C33] transition-colors duration-200 cursor-pointer">Cake</a>
+            </li>
+            <li>
+                <a href="#" data-page="wishes" class="nav-link font-birthday text-[#D94B8F] text-base sm:text-lg hover:text-[#B72C33] transition-colors duration-200 cursor-pointer">Wishes</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center w-full relative">
+
+        <section id="home" class="page-section w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center pt-24 sm:pt-0">
+            
+            <div class="flex justify-center items-center">
+                <div class="p-2 border-4 border-[#D94B8F] rounded-[40px] shadow-md">
+                    <img src="main.png" 
+                         alt="Portrait of Janhvi" 
+                         class="rounded-[32px] w-full max-w-sm h-auto aspect-[4/5] object-cover">
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-center text-center md:text-left h-full">
+                
+                <h1 class="font-name text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-[#B72C33] leading-none">
+                    Janhvi<br>shrivastava
+                </h1>
+
+                <p class="font-birthday text-xl sm:text-2xl text-[#D94B8F] mt-8">
+                    HAPPY BIRTHDAY TO YOU!!
+                </p>
+            </div>
+
+        </section>
+
+        <section id="cake" class="page-section hidden w-full max-w-5xl mx-auto p-8 pt-24 sm:pt-16 text-center flex flex-col items-center justify-center overflow-hidden">
+            <div id="confetti-container" class="absolute inset-0 w-full h-full pointer-events-none z-50"></div>
+            
+            <h1 id="cake-title" class="font-birthday text-4xl sm:text-5xl text-[#B72C33] mb-8 transition-opacity duration-500">Here's your cake!</h1>
+            
+            <p id="cake-instructions" class="font-birthday text-xl sm:text-2xl text-[#D94B8F] mt-4 opacity-0 transition-opacity duration-500">Make a wish and blow out the candles!</p>
+            
+            <button id="blow-fallback-btn" class="hidden font-birthday text-white bg-[#D94B8F] hover:bg-[#B72C33] px-6 py-3 rounded-lg mt-4 transition-all duration-300 shadow-md">
+                Click to blow out candles!
+            </button>
+
+            <h2 id="cake-banner" class="font-name text-5xl sm:text-7xl text-[#B72C33] opacity-0 scale-50 transition-all duration-500 delay-300 mt-8">
+                Happy Birthday, Janhvi!
+            </h2>
+
+            <div id="cake-container" class="relative w-64 h-64 sm:w-80 sm:h-80 mt-8">
+                <div id="cake-base" class="cake-layer absolute bottom-0 w-full h-20 sm:h-24 bg-pink-300 rounded-lg shadow-md opacity-0 transform translate-y-4"></div>
+                <div id="cake-middle" class="cake-layer absolute bottom-20 left-4 w-56 h-16 sm:bottom-24 sm:left-8 sm:w-64 sm:h-20 bg-pink-200 rounded-lg shadow-md opacity-0 transform translate-y-4"></div>
+                <div id="cake-top" class="cake-layer absolute bottom-36 left-12 w-40 h-12 sm:bottom-44 sm:left-16 sm:w-48 sm:h-16 bg-pink-100 rounded-lg shadow-md opacity-0 transform translate-y-4"></div>
+                
+                <div id="candles-container" class="cake-layer absolute bottom-48 left-12 w-40 sm:bottom-60 sm:left-16 sm:w-48 h-16 flex justify-center space-x-4 opacity-0 transform translate-y-4">
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="wishes" class="page-section hidden w-full max-w-6xl mx-auto p-8 pt-24 sm:pt-16 text-center">
+            <h1 class="font-birthday text-4xl sm:text-5xl text-[#B72C33]">Wishes from Friends</h1>
+            <p class="font-birthday text-xl text-[#D94B8F] mt-4">Hover over a card to see the wish!</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+                
+                <div class="flip-card">
+                    <div class="flip-card-inner shadow-md rounded-lg">
+                        <div class="flip-card-front bg-white/50 border-2 border-[#D94B8F]">
+                            <img src="janhvi with vainavi.jpeg" alt="Friend 1" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-[#D94B8F] text-white p-6 flex flex-col items-center justify-start border-2 border-[#B72C33] overflow-y-auto">
+                            <h3 class="font-birthday text-2xl mb-4">Vainavi</h3>
+                            <p class="font-sans text-base">" Happy 19th meri Jhonvayyy 🫶🫂❤️
+         I love you bohotttt saara, more than you can everrr imagine🫶
+         Gym m bohot kaand kare lekin I will always cherish those days that brought me much closer to you than we ever were! 💞 
+         To many more uncontrollable laughs and making memories w you 🥂
+         Love you bbg 💋"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner shadow-md rounded-lg">
+                        <div class="flip-card-front bg-white/50 border-2 border-[#D94B8F]">
+                            <img src="4.jpeg" alt="Friend 2" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-[#D94B8F] text-white p-6 flex flex-col items-center justify-start border-2 border-[#B72C33] overflow-y-auto">
+                            <h3 class="font-birthday text-2xl mb-4">Neelakshi</h3>
+                            <p class="font-sans text-base">"Happy birthday jaanu 🫶🏻. You're the strongest person I've ever met. 
+         I still remember following you around in 7th class as I used to find you so cool , 
+         you still are & always will be the coolest kaju katli .I miss our chitter bitter during English lectures. 
+         Hope we're classmates and bestest of best friends in every universe. 
+         I hope we stay connected forever bb 💋. Love you to the moon & back 🫶🏻"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner shadow-md rounded-lg">
+                        <div class="flip-card-front bg-white/50 border-2 border-[#D94B8F]">
+                            <img src="priyam with j.jpeg" alt="Friend 3" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-[#D94B8F] text-white p-6 flex flex-col items-center justify-start border-2 border-[#B72C33] overflow-y-auto">
+                            <h3 class="font-birthday text-2xl mb-4">Priyamvada</h3>
+                            <p class="font-sans text-base">" Happy Birthday babygirl 
+         Thankyou for being my person💋
+         You deserve the best everything 
+         Love you so so much"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner shadow-md rounded-lg">
+                        <div class="flip-card-front bg-white/50 border-2 border-[#D94B8F]">
+                            <img src="2.jpeg" alt="Friend 4" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-[#D94B8F] text-white p-6 flex flex-col items-center justify-start border-2 border-[#B72C33] overflow-y-auto">
+                            <h3 class="font-birthday text-2xl mb-4">Tavishi</h3>
+                            <p class="font-sans text-base">" happy birthday janhvi💋
+         stay the same always!
+         i loveyou so much"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner shadow-md rounded-lg">
+                        <div class="flip-card-front bg-white/50 border-2 border-[#D94B8F]">
+                            <img src="shikha with janhvi.jpg" alt="Friend 5" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-[#D94B8F] text-white p-6 flex flex-col items-center justify-start border-2 border-[#B72C33] overflow-y-auto">
+                            <h3 class="font-birthday text-2xl mb-4">Shikha</h3>
+                            <p class="font-sans text-base">"Happy Birthday, Janhvi! Wishing you all the happiness in the world. Have an amazing day!"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner shadow-md rounded-lg">
+                        <div class="flip-card-front bg-white/50 border-2 border-[#D94B8F]">
+                            <img src="" alt="Friend 6" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-[#D94B8F] text-white p-6 flex flex-col items-center justify-start border-2 border-[#B72C33] overflow-y-auto">
+                            <h3 class="font-birthday text-2xl mb-4">Aditi
+                            </h3>
+                            <p class="font-sans text-base">"Happy birthday to the kindest and most wonderful person I know. Cheers to you!"</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flip-card lg:col-start-2">
+                    <div class="flip-card-inner shadow-md rounded-lg">
+                        <div class="flip-card-front bg-white/50 border-2 border-[#D94B8F]">
+                            <img src="https://placehold.co/400x400/e0e0e0/777?text=Friend+7+%26+Janhvi" alt="Friend 7" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-[#D94B8F] text-white p-6 flex flex-col items-center justify-start border-2 border-[#B72C33] overflow-y-auto">
+                            <h3 class="font-birthday text-2xl mb-4">Niharika</h3>
+                            <p class="font-sans text-base">" Happy happy birthday Jnahvi!! happy 19th this year, tu inn logo mai se sabse achi hai mujhe labhi photo lene ko force nhi karti aur mera side bhi leti hai and aise hi lete rehna. You deserve all the happiness. once again happy birthday!"</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="garden" class="page-section hidden w-full h-full min-h-screen p-8 pt-24 sm:pt-16 text-center relative overflow-hidden bg-gradient-to-b from-sky-200 to-pink-200"> <h1 class="font-birthday text-4xl sm:text-5xl text-[#B72C33] z-10 relative">Meme Garden 🌸</h1>
+            <p class="font-birthday text-xl text-[#D94B8F] mt-4 z-10 relative">Click a flower and let laughter bloom 🌷</p>
+
+            <div class="relative w-full h-full min-h-[70vh] mt-12 z-10">
+                
+                <div id="flower-1" class="flower absolute cursor-pointer transform transition-transform hover:scale-110" 
+                    data-meme-type="image" 
+                    data-meme-content="meme1.jpg">
+                    <svg class="flower-svg" viewBox="0 0 100 100"><path class="stem" d="M 49 100 L 49 40 C 49 40 40 45 40 50 C 40 55 49 60 49 60 L 51 100 L 51 60 C 51 60 60 55 60 50 C 60 45 51 40 51 40 L 51 100 Z" /><circle class="center" cx="50" cy="25" r="10" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 -12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 -8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 -8)" /></svg>
+                </div>
+                
+                <div id="flower-2" class="flower absolute cursor-pointer transform transition-transform hover:scale-110"
+                    data-meme-type="video"
+                    data-meme-content="meme2.mp4">
+                    <svg class="flower-svg" viewBox="0 0 100 100"><path class="stem" d="M 49 100 L 49 40 C 49 40 40 45 40 50 C 40 55 49 60 49 60 L 51 100 L 51 60 C 51 60 60 55 60 50 C 60 45 51 40 51 40 L 51 100 Z" /><circle class="center" cx="50" cy="25" r="10" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 -12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 -8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 -8)" /></svg>
+                </div>
+
+                <div id="flower-3" class="flower absolute cursor-pointer transform transition-transform hover:scale-110"
+                    data-meme-type="video"
+                    data-meme-content="meme3.mp4">
+                    <svg class="flower-svg" viewBox="0 0 100 100"><path class="stem" d="M 49 100 L 49 40 C 49 40 40 45 40 50 C 40 55 49 60 49 60 L 51 100 L 51 60 C 51 60 60 55 60 50 C 60 45 51 40 51 40 L 51 100 Z" /><circle class="center" cx="50" cy="25" r="10" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 -12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 8)" /><path class="petal"d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 -8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 -8)" /></svg>
+                </div>
+                
+                <div id="flower-4" class="flower absolute cursor-pointer transform transition-transform hover:scale-110"
+                    data-meme-type="video"
+                    data-meme-content="meme4.mp4">
+                    <svg class="flower-svg" viewBox="0 0 100 100"><path class="stem" d="M 49 100 L 49 40 C 49 40 40 45 40 50 C 40 55 49 60 49 60 L 51 100 L 51 60 C 51 60 60 55 60 50 C 60 45 51 40 51 40 L 51 100 Z" /><circle class="center" cx="50" cy="25" r="10" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 -12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 -8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 -8)" /></svg>
+                </div>
+                
+                <div id="flower-5" class="flower absolute cursor-pointer transform transition-transform hover:scale-110"
+                    data-meme-type="video"
+                    data-meme-content="meme5.mp4">
+                    <svg class="flower-svg" viewBox="0 0 100 100"><path class="stem" d="M 49 100 L 49 40 C 49 40 40 45 40 50 C 40 55 49 60 49 60 L 51 100 L 51 60 C 51 60 60 55 60 50 C 60 45 51 40 51 40 L 51 100 Z" /><circle class="center" cx="50" cy="25" r="10" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 -12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(0 12)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-12 0)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 8)" /><path class="petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(8 -8)" /><path class.petal" d="M 50 25 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" transform="translate(-8 -8)" /></svg>
+                </div>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 w-full h-32 z-0"> <svg viewBox="0 0 1440 100" preserveAspectRatio="none" class="w-full h-full" style="fill: #86efac;"> <path d="M-5,100 C300,50 400,100 700,60 C1000,20 1200,80 1445,60 L1445,100 L-5,100 Z"></path>
+                </svg>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="meme-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4" onclick="closeMemeModal()">
+        <div class="bg-[#F7F4F0] p-4 sm:p-6 rounded-lg shadow-xl border-[#D94B8F] relative w-full max-w-md" style="border-style: dotted; border-width: 6px;" onclick="event.stopPropagation()">
+            <button id="close-modal" class="absolute -top-4 -right-4 sm:-top-5 sm:-right-5 bg-white rounded-full w-10 h-10 text-3xl font-bold text-[#B72C33] border-4 border-[#D94B8F] flex items-center justify-center leading-none pb-1 cursor-pointer">&times;</button>
+            <div id="meme-content" class="w-full max-h-[70vh] overflow-y-auto">
+                </div>
+        </div>
+    </div>
+
+    <audio id="bg-audio" autoplay loop>
+        <source src="lana.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <button id="audio-toggle-btn" 
+            class="fixed bottom-4 left-4 sm:bottom-8 sm:left-8 z-50 bg-[#D94B8F] text-white w-12 h-12 rounded-full flex items-center justify-center text-lg shadow-md hover:bg-[#B72C33] transition-colors"
+            style="padding-bottom: 2px; padding-left: 2px;">
+        ||
+    </button>
+
+
+    <script>
+        // Store modal elements in global scope for access
+        const modal = document.getElementById('meme-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const memeContent = document.getElementById('meme-content');
+
+        // Function to close the modal
+        function closeMemeModal() {
+            modal.classList.add('hidden');
+            // CRITICAL: Clear content to stop videos from playing in the background
+            memeContent.innerHTML = '';
+        }
+
+        // --- NEW CAKE ANIMATION GLOBALS ---
+        let audioContext;
+        let analyser;
+        let microphone;
+        let audioStream;
+        let isCheckingMic = false;
+        let animationFrameId;
+
+        function showCakeElement(elementId) {
+            const el = document.getElementById(elementId);
+            if(el) {
+                el.classList.remove('opacity-0', 'translate-y-4');
+            }
+        }
+        
+        function hideCakeElement(elementId) {
+            const el = document.getElementById(elementId);
+            if(el) {
+                el.classList.add('opacity-0', 'translate-y-4');
+                // Special case for banner
+                if (elementId === 'cake-banner') {
+                    el.classList.add('scale-50');
+                    el.classList.remove('scale-100');
+                }
+            }
+        }
+
+        // 1. Reset and Start Cake Animation
+        function startCakeAnimation() {
+            // Reset all elements first
+            hideCakeElement('cake-base');
+            hideCakeElement('cake-middle');
+            hideCakeElement('cake-top');
+            hideCakeElement('candles-container');
+            hideCakeElement('cake-instructions');
+            document.getElementById('blow-fallback-btn').classList.add('hidden');
+            document.getElementById('cake-banner').classList.add('opacity-0', 'scale-50');
+            document.getElementById('cake-banner').classList.remove('scale-100');
+            document.getElementById('confetti-container').innerHTML = '';
+            document.querySelectorAll('.flame').forEach(f => f.classList.remove('blown-out'));
+            
+            // Start sequence
+            setTimeout(() => showCakeElement('cake-base'), 500);
+            setTimeout(() => showCakeElement('cake-middle'), 1000);
+            setTimeout(() => showCakeElement('cake-top'), 1500);
+            setTimeout(() => showCakeElement('candles-container'), 2000);
+            setTimeout(() => {
+                showCakeElement('cake-instructions');
+                initMic();
+            }, 2500);
+        }
+
+        // 2. Initialize Microphone
+        function initMic() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    audioStream = stream;
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    microphone.connect(analyser);
+                    analyser.fftSize = 512;
+                    isCheckingMic = true;
+                    checkBlow();
+                })
+                .catch(err => {
+                    // console.error("Mic access denied:", err);
+                    // Show fallback button if mic is denied
+                    document.getElementById('blow-fallback-btn').classList.remove('hidden');
+                });
+        }
+
+        // 3. Check for Blow
+        function checkBlow() {
+            if (!isCheckingMic) return;
+            
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteTimeDomainData(dataArray);
+            
+            let sum = 0;
+            for(let i = 0; i < dataArray.length; i++) {
+                sum += Math.abs(dataArray[i] - 128); // Calculate amplitude
+            }
+            let avg = sum / dataArray.length;
+
+            // Adjust this threshold based on testing
+            const BLOW_THRESHOLD = 20; 
+
+            if (avg > BLOW_THRESHOLD) {
+                blowOutCandles();
+            } else {
+                animationFrameId = requestAnimationFrame(checkBlow);
+            }
+        }
+
+        // 4. Blow Out Candles
+        function blowOutCandles() {
+            if (!isCheckingMic && !document.getElementById('blow-fallback-btn').classList.contains('hidden')) {
+                // This was triggered by the button
+            }
+            
+            isCheckingMic = false; // Stop the mic check loop
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+
+            document.querySelectorAll('.flame').forEach(flame => {
+                flame.classList.add('blown-out');
+            });
+            hideCakeElement('cake-instructions');
+            document.getElementById('blow-fallback-btn').classList.add('hidden');
+            
+            setTimeout(showConfetti, 300);
+            setTimeout(showBanner, 800);
+            stopCakeAnimation(false); // Stop mic stream, but don't reset elements
+        }
+        
+        // 5. Show Confetti
+        function showConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#ec4899', '#fde047', '#4ade80', '#3b82f6', '#a855f7'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.opacity = `${Math.random() + 0.2}`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(confetti);
+            }
+            // Remove confetti after animation
+            setTimeout(() => { container.innerHTML = '' }, 4000);
+        }
+
+        // 6. Show Banner
+        function showBanner() {
+            const banner = document.getElementById('cake-banner');
+            banner.classList.remove('opacity-0', 'scale-50');
+            banner.classList.add('scale-100');
+        }
+
+        // 7. Stop/Cleanup Function
+        function stopCakeAnimation(resetElements = true) {
+            // Stop mic
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => track.stop());
+                audioStream = null;
+            }
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+            }
+            isCheckingMic = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+
+            // Hide all elements if resetting
+            if (resetElements) {
+                hideCakeElement('cake-base');
+                hideCakeElement('cake-middle');
+                hideCakeElement('cake-top');
+                hideCakeElement('candles-container');
+                hideCakeElement('cake-instructions');
+                document.getElementById('blow-fallback-btn').classList.add('hidden');
+                const banner = document.getElementById('cake-banner');
+                banner.classList.add('opacity-0', 'scale-50');
+                banner.classList.remove('scale-100');
+                document.getElementById('confetti-container').innerHTML = '';
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinksContainer = document.getElementById('nav-links');
+            const pageSections = document.querySelectorAll('.page-section');
+
+            // --- Page Navigation ---
+            navLinksContainer.addEventListener('click', (e) => {
+                const link = e.target.closest('.nav-link');
+                if (!link) return;
+                e.preventDefault(); 
+                
+                const pageId = link.dataset.page;
+                
+                // --- CLEANUP LOGIC ---
+                // Before switching, check if the cake page is active and stop it
+                const visiblePage = document.querySelector('.page-section:not(.hidden)');
+                if (visiblePage && visiblePage.id === 'cake') {
+                    stopCakeAnimation(true); // Pass true to reset all elements
+                }
+
+                // --- PAGE SWITCHING ---
+                pageSections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                }
+
+                // --- START LOGIC ---
+                // If the new page is the cake, start its animation
+                if (pageId === 'cake') {
+                    startCakeAnimation();
+                }
+            });
+
+            // --- Meme Garden Logic ---
+            const flowers = document.querySelectorAll('.flower');
+            closeModalBtn.addEventListener('click', closeMemeModal);
+            flowers.forEach(flower => {
+                flower.addEventListener('click', () => {
+                    const type = flower.dataset.memeType;
+                    const content = flower.dataset.memeContent;
+                    memeContent.innerHTML = ''; // Clear previous
+                    if (type === 'text') {
+                        const textElement = document.createElement('p');
+                        textElement.className = 'font-birthday text-2xl text-center text-[#B72C33]';
+                        textElement.textContent = content;
+                        memeContent.appendChild(textElement);
+                    } 
+                    else if (type === 'image') {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = content;
+                        imgElement.alt = 'Meme';
+                        imgElement.className = 'w-full h-auto rounded-lg';
+                        memeContent.appendChild(imgElement);
+                    } 
+                    else if (type === 'video') {
+                        const videoElement = document.createElement('video');
+                        videoElement.src = content;
+                        videoElement.controls = true;
+                        videoElement.autoplay = true;
+                        videoElement.className = 'w-full h-auto rounded-lg';
+                        memeContent.appendChild(videoElement);
+                    }
+                    modal.classList.remove('hidden');
+                });
+            });
+
+            // --- CAKE FALLBACK BUTTON ---
+            document.getElementById('blow-fallback-btn').addEventListener('click', blowOutCandles);
+            
+            // --- AUDIO TOGGLE LOGIC ---
+            const audioPlayer = document.getElementById('bg-audio');
+            const audioToggleBtn = document.getElementById('audio-toggle-btn');
+            
+            if (audioPlayer) {
+                audioPlayer.play().catch(e => {
+                    // Autoplay was blocked, show play button
+                    audioToggleBtn.innerHTML = '►';
+                    audioToggleBtn.style.paddingLeft = '6px'; // Adjust for '►'
+                });
+
+                audioToggleBtn.addEventListener('click', () => {
+                    if (audioPlayer.paused) {
+                        audioPlayer.play();
+                        audioToggleBtn.innerHTML = '||';
+                        audioToggleBtn.style.paddingLeft = '2px'; // Reset padding
+                    } else {
+                        audioPlayer.pause();
+                        audioToggleBtn.innerHTML = '►';
+                        audioToggleBtn.style.paddingLeft = '6px'; // Adjust for '►'
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
